@@ -1,5 +1,7 @@
 package metrics
 
+import "time"
+
 const (
 	M_TEMP_MIN  = 70
 	M_TEMP_MAX  = 85
@@ -18,9 +20,10 @@ const (
 )
 
 type Metrics struct {
-	MotorTemp  Metric `json:"motor-temperature"`
-	MotorRPM   Metric `json:"motor-rpm"`
-	MotorNoise Metric `json:"motor-noise"`
+	MotorTemp  Metric    `json:"motor_temperature_c"`
+	MotorRPM   Metric    `json:"motor_rpm"`
+	MotorNoise Metric    `json:"motor_db"`
+	TimeStamp  time.Time `json:"timestamp"`
 }
 
 type Metric struct {
@@ -68,6 +71,8 @@ func (m *Metrics) PromoteMetrics() {
 	m.MotorTemp.AdvanceMetricValue()
 	m.MotorRPM.AdvanceMetricValue()
 	m.MotorNoise.AdvanceMetricValue()
+
+	m.TimeStamp = time.Now()
 }
 
 func (m *Metric) DetermineMetricStrategy() {
