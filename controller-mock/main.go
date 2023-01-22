@@ -8,11 +8,17 @@ import (
 
 func main() {
 
-	metrics := metrics.InitMetrics()
+	// init metrics with initial data
+	mtrx := metrics.InitMetrics()
 
-	go runDataLoop(metrics)
+	// concurrently promote metrics with new data
+	go runDataLoop(mtrx)
 
-	metrics.HandleRequests()
+	// route metric data over http
+	// metrics.HandleRequests()
+
+	// route metric data over tcp
+	mtrx.SendMetricsOverTCP()
 }
 
 func runDataLoop(m *metrics.Metrics) {
