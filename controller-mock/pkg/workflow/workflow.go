@@ -30,13 +30,15 @@ func (wf *Workflow) PromoteWorkflowMetrics() {
 
 	// change metric Strategy if necessary
 	wf.Metrics.MotorTemp.DetermineMetricStrategy()
-	wf.Metrics.MotorRPM.DetermineMetricStrategy()
+	wf.Metrics.MotorSpeed.DetermineMetricStrategy()
 	wf.Metrics.MotorNoise.DetermineMetricStrategy()
+	wf.Metrics.MotorPowerConsumption.DetermineMetricStrategy()
 
 	// advance metric value in relation to metric strategy
 	wf.Metrics.MotorTemp.AdvanceMetricValue()
-	wf.Metrics.MotorRPM.AdvanceMetricValue()
+	wf.Metrics.MotorSpeed.AdvanceMetricValue()
 	wf.Metrics.MotorNoise.AdvanceMetricValue()
+	wf.Metrics.MotorPowerConsumption.AdvanceMetricValue()
 
 	// set new timeStamp
 	wf.TimeStamp = time.Now()
