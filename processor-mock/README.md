@@ -22,6 +22,9 @@ Type: JSON packet with workflow data and timestamp
         },
         "motor_noise": {
             "value":90
+        },
+        "motor_power_consumption": {
+            "value":14
         }
     }
 }

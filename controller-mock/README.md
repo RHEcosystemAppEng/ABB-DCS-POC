@@ -6,6 +6,7 @@ A Controller monitors workflows in production cycles and collects statuses from 
 * Motor Temperature 
 * Motor Speed 
 * Motor Noise
+* Motor Power Consumption
 
 ## Functionality
 Reports to the Processor every <time interval> with new metric data. 
@@ -20,6 +21,10 @@ Following a deterministic approach, starting from the lowest range limit, with e
 * Motor noise 
     * range: 90 db - 97.5 db
     * fluctuation unit: 0.5
+* Motor power consumption 
+    * range: 14 kW - 21.5 kW
+    * fluctuation unit: 0.5
+
 
 
 ## Components
@@ -44,6 +49,9 @@ Type: JSON packet with workflow data and timestamp
         },
         "motor_noise": {
             "value":90
+        },
+        "motor_power_consumption": {
+            "value":14
         }
     }
 }

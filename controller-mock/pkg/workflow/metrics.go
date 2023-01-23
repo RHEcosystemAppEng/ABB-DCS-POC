@@ -13,14 +13,19 @@ const (
 	M_NOISE_MAX  = 97
 	M_NOISE_UNIT = 0.5
 
+	M_POWER_CONSUMPTION_MIN  = 14
+	M_POWER_CONSUMPTION_MAX  = 21.5
+	M_POWER_CONSUMPTION_UNIT = 0.5
+
 	INCREMENT = "increment"
 	DECREMENT = "decrement"
 )
 
 type Metrics struct {
-	MotorTemp  Metric `json:"motor_temperature"`
-	MotorSpeed Metric `json:"motor_speed"`
-	MotorNoise Metric `json:"motor_noise"`
+	MotorTemp             Metric `json:"motor_temperature"`
+	MotorSpeed            Metric `json:"motor_speed"`
+	MotorNoise            Metric `json:"motor_noise"`
+	MotorPowerConsumption Metric `json:"motor_power_consumption"`
 }
 
 type Metric struct {
@@ -35,9 +40,10 @@ func InitMetrics() *Metrics {
 
 	// init metrics with default values
 	metrics := Metrics{
-		MotorTemp:  InitMetric(M_TEMP_MIN, M_TEMP_MAX, M_TEMP_UNIT),
-		MotorSpeed: InitMetric(M_SPEED_MIN, M_SPEED_MAX, M_SPEED_UNIT),
-		MotorNoise: InitMetric(M_NOISE_MIN, M_NOISE_MAX, M_NOISE_UNIT),
+		MotorTemp:             InitMetric(M_TEMP_MIN, M_TEMP_MAX, M_TEMP_UNIT),
+		MotorSpeed:            InitMetric(M_SPEED_MIN, M_SPEED_MAX, M_SPEED_UNIT),
+		MotorNoise:            InitMetric(M_NOISE_MIN, M_NOISE_MAX, M_NOISE_UNIT),
+		MotorPowerConsumption: InitMetric(M_POWER_CONSUMPTION_MIN, M_POWER_CONSUMPTION_MAX, M_POWER_CONSUMPTION_UNIT),
 	}
 
 	return &metrics
