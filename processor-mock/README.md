@@ -14,13 +14,13 @@ Type: JSON packet with workflow data and timestamp
     "workflow_Id": <uuid>,
     "timestamp": <now>,
     "metrics": {
-        "motor_temperature_c": {
+        "motor_temperature": {
             "value":70
         },
-        "motor_rpm": {
+        "motor_speed": {
             "value":5000
         },
-        "motor_db": {
+        "motor_noise": {
             "value":90
         }
     }
