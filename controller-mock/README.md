@@ -56,3 +56,15 @@ Type: JSON packet with workflow data and timestamp
     }
 }
 ```
+
+## Build Docker Image
+
+From current directory run:
+* Using Podman
+```bash
+podman build -t [NAME:TAG] -f ./docker .
+```
+* Using Docker
+```bash
+docker build -t [NAME:TAG] -f ./docker/Dockerfile .
+```
