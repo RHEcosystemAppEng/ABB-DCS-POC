@@ -12,10 +12,6 @@ const (
 	TYPE = "tcp"
 )
 
-var (
-	err error
-)
-
 func (m *Metrics) SendMetricsOverTCP() {
 
 	// define tcp address
@@ -33,6 +29,9 @@ func (m *Metrics) SendMetricsOverTCP() {
 
 	// convert metrics struct to json packet
 	mJson, err := json.Marshal(m)
+	if err != nil {
+		log.Fatalf("Marshaling metrics to JSON failed: %s", err)
+	}
 
 	// write message through network connection
 	_, err = conn.Write([]byte(mJson))
@@ -46,5 +45,5 @@ func (m *Metrics) SendMetricsOverTCP() {
 	if err != nil {
 		log.Fatalf("Read data failed: %s", err)
 	}
-	println("Received message:", string(response))
+	println("Response message:", string(response))
 }
