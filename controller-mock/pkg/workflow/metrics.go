@@ -1,10 +1,4 @@
-package metrics
-
-import (
-	"encoding/json"
-	"net/http"
-	"time"
-)
+package workflow
 
 const (
 	M_TEMP_MIN  = 70
@@ -24,10 +18,9 @@ const (
 )
 
 type Metrics struct {
-	MotorTemp  Metric    `json:"motor_temperature_c"`
-	MotorRPM   Metric    `json:"motor_rpm"`
-	MotorNoise Metric    `json:"motor_db"`
-	TimeStamp  time.Time `json:"timestamp"`
+	MotorTemp  Metric `json:"motor_temperature_c"`
+	MotorRPM   Metric `json:"motor_rpm"`
+	MotorNoise Metric `json:"motor_db"`
 }
 
 type Metric struct {
@@ -64,21 +57,6 @@ func InitMetric(min float64, max float64, unit float64) Metric {
 	return metric
 }
 
-func (m *Metrics) PromoteMetrics() {
-
-	// change metric Strategy if necessary
-	m.MotorTemp.DetermineMetricStrategy()
-	m.MotorRPM.DetermineMetricStrategy()
-	m.MotorNoise.DetermineMetricStrategy()
-
-	// advance metric value by metric strategy
-	m.MotorTemp.AdvanceMetricValue()
-	m.MotorRPM.AdvanceMetricValue()
-	m.MotorNoise.AdvanceMetricValue()
-
-	m.TimeStamp = time.Now()
-}
-
 func (m *Metric) DetermineMetricStrategy() {
 
 	if m.CurrentValue == m.RangeMax {
@@ -98,10 +76,4 @@ func (m *Metric) AdvanceMetricValue() {
 		// if metric strategy is decrement, decrease current metric value by one unit
 		m.CurrentValue -= m.FluctUnit
 	}
-}
-
-func (m *Metrics) ReturnAllMetrics(w http.ResponseWriter, r *http.Request) {
-
-	// decode metrics data to json
-	json.NewEncoder(w).Encode(m)
 }

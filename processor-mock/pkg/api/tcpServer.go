@@ -13,7 +13,7 @@ const (
 	TYPE = "tcp"
 )
 
-func GetMetricsOverTCP() {
+func GetWorkflowDataOverTCP() {
 
 	// listen to tcp network
 	listen, err := net.Listen(TYPE, HOST+":"+PORT)

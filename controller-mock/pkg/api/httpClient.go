@@ -4,12 +4,12 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/RHEcosystemAppEng/abb-dcs-poc/controller-mock/pkg/metrics"
+	"github.com/RHEcosystemAppEng/abb-dcs-poc/controller-mock/pkg/workflow"
 )
 
-func HandleHttpRequests(m *metrics.Metrics) {
+func HandleHttpRequests(wf *workflow.Workflow) {
 
-	// route metrics data to http://localhost:8080/metrics
-	http.HandleFunc("/metrics", m.ReturnAllMetrics)
+	// route workflow data to http://localhost:8080/workflow
+	http.HandleFunc("/workflow", wf.ReturnWorkflowData)
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }

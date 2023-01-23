@@ -1,6 +1,6 @@
 # Controller Mock
-## Description:
-A Controller monitors work flows, as well as material movement in production cycles.  
+## Description
+A Controller monitors workflows in production cycles and collects statuses from various metrics.  
 
 ## Metrics
 * Motor Temperature 
@@ -23,25 +23,28 @@ Following a deterministic approach, starting from the lowest range limit, with e
 
 
 ## Components
-* Metrics - structs all metrics and hold all metric functionality
-* Api - sents metrics data to Processor-mock over a tcp network
+* Workflow - holds data on the monitored workflow and data on all related metrics
+* Api - sents workflow data to Processor-mock over a tcp network
 
 ## Input
 None
 
 ## Output
-Type: JSON packet with metric data and timestamp 
+Type: JSON packet with workflow data and timestamp 
 ```json
 {
-    "motor_temperature_c": {
-        "value":70
-    },
-    "motor_rpm": {
-        "value":5000
-    },
-    "motor_db": {
-        "value":90
-    },
-    "timestamp": <now>
+    "workflow_Id": <uuid>,
+    "timestamp": <now>,
+    "metrics": {
+        "motor_temperature_c": {
+            "value":70
+        },
+        "motor_rpm": {
+            "value":5000
+        },
+        "motor_db": {
+            "value":90
+        }
+    }
 }
 ```
