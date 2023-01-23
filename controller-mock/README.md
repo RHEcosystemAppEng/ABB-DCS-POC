@@ -24,7 +24,7 @@ Following a deterministic approach, starting from the lowest range limit, with e
 
 ## Components
 * Metrics - structs all metrics and hold all metric functionality
-* Api - <TBD>
+* Api - sents metrics data to Processor-mock over a tcp network
 
 ## Input
 None
