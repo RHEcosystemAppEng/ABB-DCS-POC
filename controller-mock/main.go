@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/RHEcosystemAppEng/abb-dcs-poc/controller-mock/pkg/api"
-	"github.com/RHEcosystemAppEng/abb-dcs-poc/controller-mock/pkg/metrics"
+	"github.com/RHEcosystemAppEng/abb-dcs-poc/controller-mock/pkg/workflow"
 )
 
 const (
@@ -13,25 +13,25 @@ const (
 
 func main() {
 
-	// init metrics with initial data
-	mtrx := metrics.InitMetrics()
+	// init Workflow with initial metrics data
+	wf := workflow.InitWorkflow()
 
-	// route initial metric data over tcp
-	api.SendMetricsOverTCP(mtrx)
+	// route initial workflow data over tcp
+	api.SendWorkflowDataOverTCP(wf)
 
-	// in an endless loop, every time interval, promote metrics data and send to server over tcp
+	// in an endless loop, every time interval, promote workflow metrics data and send to server over tcp
 	for {
 
 		// wait time interval
 		time.Sleep(TIME_INTERVAL * time.Second)
 
-		// promote metrics data
-		mtrx.PromoteMetrics()
+		// promote workflow metrics data
+		wf.PromoteWorkflowMetrics()
 
-		// route promoted metric data over tcp
-		api.SendMetricsOverTCP(mtrx)
+		// route workflow data with promoted metrics over tcp
+		api.SendWorkflowDataOverTCP(wf)
 	}
 
-	// // route metric data over http
-	// api.HandleHttpRequests(mtrx)
+	// // route workflow data over http
+	// api.HandleHttpRequests(wf)
 }
