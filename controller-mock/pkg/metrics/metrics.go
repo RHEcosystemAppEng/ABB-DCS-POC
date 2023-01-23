@@ -1,6 +1,10 @@
 package metrics
 
-import "time"
+import (
+	"encoding/json"
+	"net/http"
+	"time"
+)
 
 const (
 	M_TEMP_MIN  = 70
@@ -94,4 +98,10 @@ func (m *Metric) AdvanceMetricValue() {
 		// if metric strategy is decrement, decrease current metric value by one unit
 		m.CurrentValue -= m.FluctUnit
 	}
+}
+
+func (m *Metrics) ReturnAllMetrics(w http.ResponseWriter, r *http.Request) {
+
+	// decode metrics data to json
+	json.NewEncoder(w).Encode(m)
 }

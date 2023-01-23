@@ -3,6 +3,7 @@ package main
 import (
 	"time"
 
+	"github.com/RHEcosystemAppEng/abb-dcs-poc/controller-mock/pkg/api"
 	"github.com/RHEcosystemAppEng/abb-dcs-poc/controller-mock/pkg/metrics"
 )
 
@@ -16,7 +17,7 @@ func main() {
 	mtrx := metrics.InitMetrics()
 
 	// route initial metric data over tcp
-	mtrx.SendMetricsOverTCP()
+	api.SendMetricsOverTCP(mtrx)
 
 	// in an endless loop, every time interval, promote metrics data and send to server over tcp
 	for {
@@ -28,9 +29,9 @@ func main() {
 		mtrx.PromoteMetrics()
 
 		// route promoted metric data over tcp
-		mtrx.SendMetricsOverTCP()
+		api.SendMetricsOverTCP(mtrx)
 	}
 
-	// route metric data over http
-	// metrics.HandleRequests()
+	// // route metric data over http
+	// api.HandleHttpRequests(mtrx)
 }

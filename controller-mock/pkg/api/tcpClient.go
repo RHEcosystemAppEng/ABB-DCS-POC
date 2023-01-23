@@ -1,9 +1,11 @@
-package metrics
+package api
 
 import (
 	"encoding/json"
 	"log"
 	"net"
+
+	"github.com/RHEcosystemAppEng/abb-dcs-poc/controller-mock/pkg/metrics"
 )
 
 const (
@@ -12,7 +14,7 @@ const (
 	TYPE = "tcp"
 )
 
-func (m *Metrics) SendMetricsOverTCP() {
+func SendMetricsOverTCP(m *metrics.Metrics) {
 
 	// define tcp address
 	tcpServer, err := net.ResolveTCPAddr(TYPE, HOST+":"+PORT)
