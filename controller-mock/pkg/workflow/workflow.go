@@ -49,9 +49,9 @@ func (wf *Workflow) PromoteWorkflowMetrics() {
 
 	for _, metric := range wf.Metrics {
 		// change metric Strategy if necessary
-		metric.DetermineMetricStrategy()
+		metric.determineMetricStrategy()
 		// advance metric value in relation to metric strategy
-		metric.AdvanceMetricValue()
+		metric.advanceMetricValue()
 	}
 
 	// reset timestamp

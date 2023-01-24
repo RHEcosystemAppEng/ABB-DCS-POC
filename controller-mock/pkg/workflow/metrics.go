@@ -14,7 +14,7 @@ type Metric struct {
 	Strategy  string  `json:"strategy"`
 }
 
-func (m *Metric) DetermineMetricStrategy() {
+func (m *Metric) determineMetricStrategy() {
 
 	if m.Value == m.RangeMax {
 		// if metric has reached maximum range limit, change strategy to decrement
@@ -25,7 +25,7 @@ func (m *Metric) DetermineMetricStrategy() {
 	}
 }
 
-func (m *Metric) AdvanceMetricValue() {
+func (m *Metric) advanceMetricValue() {
 	if m.Strategy == INCREMENT {
 		// if metric strategy is increment, increase current metric value by one unit
 		m.Value += m.FluctUnit
