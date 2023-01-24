@@ -1,4 +1,4 @@
-package workflow
+package controller
 
 const (
 	INCREMENT = "increment"

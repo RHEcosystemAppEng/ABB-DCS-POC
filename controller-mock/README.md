@@ -28,17 +28,17 @@ Following a deterministic approach, starting from the lowest range limit, with e
 
 
 ## Components
-* Workflow - holds data on the monitored workflow and data on all related metrics
-* Api - sents workflow data to Processor-mock over a tcp network
+* Controller - holds data on the monitored workflow and data on all related metrics
+* Api - sents controller data to Processor-mock over a tcp network
 
 ## Input
 None
 
 ## Output
-Type: JSON packet with workflow data and timestamp 
+Type: JSON packet with controller data and timestamp 
 ```json
 {
-    "workflow_Id": <uuid>,
+    "controller_name": <name>,
     "timestamp": <now>,
     "metrics": {
         "motor_temperature": {

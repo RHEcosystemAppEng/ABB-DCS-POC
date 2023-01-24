@@ -5,5 +5,5 @@ import (
 )
 
 func main() {
-	api.GetWorkflowDataOverTCP()
+	api.GetControllerDataOverTCP()
 }

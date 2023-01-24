@@ -3,8 +3,8 @@ package main
 import (
 	"time"
 
+	"github.com/RHEcosystemAppEng/abb-dcs-poc/controller-mock/pkg/controller"
 	"github.com/RHEcosystemAppEng/abb-dcs-poc/controller-mock/pkg/kafka"
-	"github.com/RHEcosystemAppEng/abb-dcs-poc/controller-mock/pkg/workflow"
 )
 
 const (
@@ -13,28 +13,28 @@ const (
 
 func main() {
 
-	// init Workflow with initial metrics data
-	wf := workflow.InitWorkflow()
+	// init controller with initial metrics data
+	wf := controller.InitController()
 
-	// route initial workflow data over kafka
+	// route initial controller data over kafka
 	kafka.HTTPKafkaProducer(wf)
 
-	// in an endless loop, every time interval, promote workflow metrics data and send to server over tcp
+	// in an endless loop, every time interval, promote controller metrics data and send to server over kafka
 	for {
 
 		// wait time interval
 		time.Sleep(TIME_INTERVAL * time.Second)
 
-		// promote workflow metrics data
-		wf.PromoteWorkflowMetrics()
+		// promote controller metrics data
+		wf.PromoteControllerMetrics()
 
-		// route workflow data with promoted metrics over kafka
+		// route controller data with promoted metrics over kafka
 		kafka.HTTPKafkaProducer(wf)
 	}
 
-	// // route initial workflow data over tcp
-	// api.SendWorkflowDataOverTCP(wf)
+	// // route initial controller data over tcp
+	// api.SendControllerDataOverTCP(wf)
 
-	// // route workflow data over http
+	// // route controller data over http
 	// api.HandleHttpRequests(wf)
 }

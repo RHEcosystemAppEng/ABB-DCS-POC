@@ -9,7 +9,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/RHEcosystemAppEng/abb-dcs-poc/controller-mock/pkg/workflow"
+	"github.com/RHEcosystemAppEng/abb-dcs-poc/controller-mock/pkg/controller"
 	"github.com/google/uuid"
 )
 
@@ -20,9 +20,9 @@ const (
 )
 
 type KafkaMessage struct {
-	WorkflowName string    `json:"workflow_name"`
-	Timestamp    time.Time `json:"timestamp"`
-	Metric       Metric    `json:"metric"`
+	ControllerName string    `json:"controller_name"`
+	Timestamp      time.Time `json:"timestamp"`
+	Metric         Metric    `json:"metric"`
 }
 
 type Metric struct {
@@ -30,7 +30,7 @@ type Metric struct {
 	Value float64 `json:"value"`
 }
 
-func HTTPKafkaProducer(wf *workflow.Workflow) {
+func HTTPKafkaProducer(wf *controller.Controller) {
 
 	for _, metric := range wf.Metrics {
 
@@ -59,11 +59,11 @@ func HTTPKafkaProducer(wf *workflow.Workflow) {
 	}
 }
 
-func newKafkaMessage(wf *workflow.Workflow, metric *workflow.Metric) *KafkaMessage {
+func newKafkaMessage(wf *controller.Controller, metric *controller.Metric) *KafkaMessage {
 
 	km := KafkaMessage{
-		WorkflowName: wf.WorkflowName,
-		Timestamp:    wf.Timestamp,
+		ControllerName: wf.ControllerName,
+		Timestamp:      wf.Timestamp,
 		Metric: Metric{
 			Name:  metric.Name,
 			Value: metric.Value,
