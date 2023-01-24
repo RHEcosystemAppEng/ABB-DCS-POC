@@ -2,46 +2,60 @@ package workflow
 
 import (
 	"encoding/json"
+	"io/ioutil"
+	"log"
 	"net/http"
 	"time"
 
-	"github.com/google/uuid"
+	"github.com/goombaio/namegenerator"
+)
+
+const (
+	METRICS_CONFIG_FILEPATH = "./pkg/workflow/initial_metrics_config.json"
 )
 
 type Workflow struct {
-	Uuid      uuid.UUID `json:"workflow_Id"`
-	TimeStamp time.Time `json:"timestamp"`
-	Metrics   *Metrics  `json:"metrics"`
+	WorkflowName string    `json:"workflow_name"`
+	Timestamp    time.Time `json:"timestamp"`
+	Metrics      []*Metric `json:"metrics"`
 }
 
 func InitWorkflow() *Workflow {
 
-	// init workflow with unique id and metrics
+	// generate name for workflow
+	seed := time.Now().UTC().UnixNano()
+	nameGenerator := namegenerator.NewNameGenerator(seed)
+	workflowName := nameGenerator.Generate()
+
+	// init workflow struct
 	workflow := Workflow{
-		Uuid:      uuid.New(),
-		TimeStamp: time.Now(),
-		Metrics:   InitMetrics(),
+		WorkflowName: workflowName,
+		Timestamp:    time.Now(),
 	}
+
+	// read metrics config file
+	metricsConfig, err := ioutil.ReadFile(METRICS_CONFIG_FILEPATH)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// unmarshal metrics config onto workflow struct
+	json.Unmarshal([]byte(metricsConfig), &workflow)
 
 	return &workflow
 }
 
 func (wf *Workflow) PromoteWorkflowMetrics() {
 
-	// change metric Strategy if necessary
-	wf.Metrics.MotorTemp.DetermineMetricStrategy()
-	wf.Metrics.MotorSpeed.DetermineMetricStrategy()
-	wf.Metrics.MotorNoise.DetermineMetricStrategy()
-	wf.Metrics.MotorPowerConsumption.DetermineMetricStrategy()
+	for _, metric := range wf.Metrics {
+		// change metric Strategy if necessary
+		metric.DetermineMetricStrategy()
+		// advance metric value in relation to metric strategy
+		metric.AdvanceMetricValue()
+	}
 
-	// advance metric value in relation to metric strategy
-	wf.Metrics.MotorTemp.AdvanceMetricValue()
-	wf.Metrics.MotorSpeed.AdvanceMetricValue()
-	wf.Metrics.MotorNoise.AdvanceMetricValue()
-	wf.Metrics.MotorPowerConsumption.AdvanceMetricValue()
-
-	// set new timeStamp
-	wf.TimeStamp = time.Now()
+	// reset timestamp
+	wf.Timestamp = time.Now()
 }
 
 func (wf *Workflow) ReturnWorkflowData(w http.ResponseWriter, r *http.Request) {
