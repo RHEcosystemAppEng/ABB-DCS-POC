@@ -1,9 +1,12 @@
 package kafka
 
 import (
+	"bufio"
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"log"
+	"net/http"
 	"time"
 
 	"github.com/RHEcosystemAppEng/abb-dcs-poc/controller-mock/pkg/workflow"
@@ -11,7 +14,9 @@ import (
 )
 
 const (
-	KAFKA_CONFIG_FILEPATH = "./pkg/kafka/controller.properties"
+	SSL_KAFKA_CONFIG_FILEPATH = "./pkg/kafka/ssl-kafka-producer.properties"
+	HTTP_KAFKA_URL            = "http://localhost:8080/topics/%s/partitions/%d"
+	HTTP_KAFKA_CONTENT_TYPE   = "application/vnd.kafka.json.v2+json"
 )
 
 type KafkaMessage struct {
@@ -25,10 +30,38 @@ type Metric struct {
 	Value float64 `json:"value"`
 }
 
-func KafkaProducer(wf *workflow.Workflow) {
+func HTTPKafkaProducer(wf *workflow.Workflow) {
+
+	for _, metric := range wf.Metrics {
+
+		// init kafka message
+		kafkaMsg := NewKafkaMessage(wf, metric)
+
+		// marshal kafka message struct to json
+		kafkaMsgJson, err := json.Marshal(kafkaMsg)
+		if err != nil {
+			log.Fatalf("Marshaling kafka message data to JSON failed: %s", err)
+		}
+		bufferKafkaMsgJson := bytes.NewBuffer([]byte(kafkaMsgJson))
+
+		resp, err := http.Post(fmt.Sprintf(HTTP_KAFKA_URL, metric.Name, 0), HTTP_KAFKA_CONTENT_TYPE, bufferKafkaMsgJson)
+		if err != nil {
+			log.Fatalf("Posting kafka message data over HTTP failed: %s", err)
+		}
+		defer resp.Body.Close()
+
+		log.Println(resp.Status)
+		bodyAnswer := bufio.NewScanner(resp.Body)
+		for bodyAnswer.Scan() {
+			log.Println(bodyAnswer.Text())
+		}
+	}
+}
+
+func SSLKafkaProducer(wf *workflow.Workflow) {
 
 	// get kafka config
-	conf := ReadConfig(KAFKA_CONFIG_FILEPATH)
+	conf := ReadConfig(SSL_KAFKA_CONFIG_FILEPATH)
 
 	// init kafka producer in compliance with the kafka config
 	producer, err := kafka.NewProducer(&conf)
@@ -67,7 +100,6 @@ func KafkaProducer(wf *workflow.Workflow) {
 
 		producer.Produce(&kafka.Message{
 			TopicPartition: kafka.TopicPartition{Topic: &topic, Partition: kafka.PartitionAny},
-			Key:            []byte("msg"),
 			Value:          []byte(kafkaMsgJson),
 		}, nil)
 	}

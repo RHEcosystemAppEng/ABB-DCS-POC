@@ -17,7 +17,7 @@ func main() {
 	wf := workflow.InitWorkflow()
 
 	// route initial workflow data over kafka
-	kafka.KafkaProducer(wf)
+	kafka.HTTPKafkaProducer(wf)
 
 	// in an endless loop, every time interval, promote workflow metrics data and send to server over tcp
 	for {
@@ -29,7 +29,7 @@ func main() {
 		wf.PromoteWorkflowMetrics()
 
 		// route workflow data with promoted metrics over kafka
-		kafka.KafkaProducer(wf)
+		kafka.HTTPKafkaProducer(wf)
 	}
 
 	// // route initial workflow data over tcp
