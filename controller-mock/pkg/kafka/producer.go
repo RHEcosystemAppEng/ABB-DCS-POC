@@ -20,6 +20,7 @@ const (
 )
 
 type KafkaMessage struct {
+	ControllerId   string    `json:"controller_id"`
 	ControllerName string    `json:"controller_name"`
 	Timestamp      time.Time `json:"timestamp"`
 	Metric         Metric    `json:"metric"`
@@ -42,7 +43,7 @@ func HTTPKafkaProducer(wf *controller.Controller) {
 
 		// buffer kafka message
 		bufferKafkaMsgJson := bytes.NewBuffer([]byte(kafkaMsgJson))
-
+		fmt.Println(bufferKafkaMsgJson)
 		// send kafka message over kafka using http protocol, wait for response
 		resp, err := http.Post(fmt.Sprintf(HTTP_KAFKA_URL, metric.Name, 0), HTTP_KAFKA_CONTENT_TYPE, bufferKafkaMsgJson)
 		if err != nil {
@@ -62,6 +63,7 @@ func HTTPKafkaProducer(wf *controller.Controller) {
 func newKafkaMessage(wf *controller.Controller, metric *controller.Metric) *KafkaMessage {
 
 	km := KafkaMessage{
+		ControllerId:   wf.ControllerId,
 		ControllerName: wf.ControllerName,
 		Timestamp:      wf.Timestamp,
 		Metric: Metric{
