@@ -43,7 +43,7 @@ func HTTPKafkaProducer(wf *controller.Controller) {
 
 		// buffer kafka message
 		bufferKafkaMsgJson := bytes.NewBuffer([]byte(kafkaMsgJson))
-		fmt.Println(bufferKafkaMsgJson)
+
 		// send kafka message over kafka using http protocol, wait for response
 		resp, err := http.Post(fmt.Sprintf(HTTP_KAFKA_URL, metric.Name, 0), HTTP_KAFKA_CONTENT_TYPE, bufferKafkaMsgJson)
 		if err != nil {

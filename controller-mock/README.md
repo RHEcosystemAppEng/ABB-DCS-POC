@@ -9,7 +9,7 @@ A Controller monitors workflows in production cycles and collects statuses from 
 * Motor Power Consumption
 
 ## Functionality
-Reports to the Processor every <time interval> with new metric data. 
+Reports to the Processor every <time interval> over a Kafka bridge using HTTP with new metric data. 
 Following a deterministic approach, starting from the lowest range limit, with every <time interval>, the metric data will be incremented by one unit, up until reaching the top range limit. Whereas then it will be decremented by one unit until the lowest range limit has been reached. From this point the process will be repeated indefinitely.
 
 * Motor temperature
@@ -28,33 +28,103 @@ Following a deterministic approach, starting from the lowest range limit, with e
 
 
 ## Components
-* Controller - holds data on the monitored workflow and data on all related metrics
-* Api - sents controller data to Processor-mock over a tcp network
+* Controller - Generates metric data and promotes it by predefined configuration standards every single time interval
+* Kafka - The Kafka Producer allocates each message containing metric data to a corresponding topic partition and sends it over HTTP to a Kafka cluster to be later consumed by the Processor-mock
 
 ## Input
-None
+Initial metrics configuration [JSON file](pkg/controller/initial_metrics_config.json)
 
 ## Output
 Type: JSON packet with controller data and timestamp 
 ```json
 {
-    "controller_name": <name>,
-    "timestamp": <now>,
-    "metrics": {
-        "motor_temperature": {
-            "value":70
-        },
-        "motor_speed": {
-            "value":5000
-        },
-        "motor_noise": {
-            "value":90
-        },
-        "motor_power_consumption": {
-            "value":14
+    "records":
+    [
+        {
+            "key": <uuid>,
+            "value": 
+            {
+                "controller_id": <id>,
+                "controller_name": <name>,
+                "timestamp": <now>,
+                "metric":
+                {
+                    "name":"motor_temperature",
+                    "value":70
+                }
+            }
         }
-    }
+    ]
 }
+```
+``` json
+{
+    "records":
+    [
+        {
+            "key": <uuid>,
+            "value": 
+            {
+                "controller_id": <id>,
+                "controller_name": <name>,
+                "timestamp": <now>,
+                "metric":
+                {
+                    "name":"motor_speed",
+                    "value":5000
+                }
+            }
+        }
+    ]
+}
+```
+```json
+{
+    "records":
+    [
+        {
+            "key": <uuid>,
+            "value": 
+            {
+                "controller_id": <id>,
+                "controller_name": <name>,
+                "timestamp": <now>,
+                "metric":
+                {
+                    "name":"motor_noise",
+                    "value":90
+                }
+            }
+        }
+    ]
+}
+```
+```json
+{
+    "records":
+    [
+        {
+            "key": <uuid>,
+            "value": 
+            {
+                "controller_id": <id>,
+                "controller_name": <name>,
+                "timestamp": <now>,
+                "metric":
+                {
+                    "name":"motor_power_consumption",
+                    "value":14
+                }
+            }
+        }
+    ]
+}
+```
+
+## Run Program
+From current directory run:
+```bash
+go run main.go
 ```
 
 ## Build Docker Image
