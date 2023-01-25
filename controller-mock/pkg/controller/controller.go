@@ -38,7 +38,7 @@ func InitController() *Controller {
 	// read metrics config file
 	metricsConfig, err := ioutil.ReadFile(METRICS_CONFIG_FILEPATH)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("Read data from metrics config file failed: %s", err)
 	}
 
 	// unmarshal metrics config onto controller struct
