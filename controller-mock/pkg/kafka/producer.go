@@ -14,7 +14,7 @@ import (
 )
 
 const (
-	HTTP_KAFKA_URL          = "http://my-bridge-bridge-route-abb-poc.apps.abb-cl01.appeng.rhecoeng.com/topics/%s/partitions/%d"
+	HTTP_KAFKA_URL          = "http://my-bridge-bridge-route-abb-poc.apps.abb-cl01.appeng.rhecoeng.com/topics/%s"
 	HTTP_KAFKA_CONTENT_TYPE = "application/vnd.kafka.json.v2+json"
 	HTTP_KAFKA_MSG_WRAPPER  = "{\"records\":[{\"key\": \"%s\",\"value\": %s}]}"
 )
@@ -45,7 +45,7 @@ func HTTPKafkaProducer(wf *controller.Controller) {
 		bufferKafkaMsgJson := bytes.NewBuffer([]byte(kafkaMsgJson))
 
 		// send kafka message over kafka using http protocol, wait for response
-		resp, err := http.Post(fmt.Sprintf(HTTP_KAFKA_URL, metric.Name, 0), HTTP_KAFKA_CONTENT_TYPE, bufferKafkaMsgJson)
+		resp, err := http.Post(fmt.Sprintf(HTTP_KAFKA_URL, metric.Name), HTTP_KAFKA_CONTENT_TYPE, bufferKafkaMsgJson)
 		if err != nil {
 			log.Fatalf("Posting kafka message data over HTTP failed: %s", err)
 		}
