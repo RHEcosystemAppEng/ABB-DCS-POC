@@ -44,20 +44,28 @@ func InitController() *Controller {
 	// unmarshal metrics config onto controller struct
 	json.Unmarshal([]byte(metricsConfig), &controller)
 
+	// set initial strategy and timestamp for each metric
+	for _, metric := range controller.Metrics {
+		metric.Strategy = INCREMENT
+		metric.Timestamp = time.Now()
+	}
+
 	return &controller
 }
 
-func (wf *Controller) PromoteControllerMetrics() {
+func (c *Controller) PromoteControllerMetrics() {
 
-	for _, metric := range wf.Metrics {
+	for _, metric := range c.Metrics {
 		// change metric Strategy if necessary
 		metric.determineMetricStrategy()
 		// advance metric value in relation to metric strategy
 		metric.advanceMetricValue()
+		// update metric timestamp
+		metric.Timestamp = time.Now()
 	}
 
-	// reset timestamp
-	wf.Timestamp = time.Now()
+	// update controller timestamp
+	c.Timestamp = time.Now()
 }
 
 func buildControllerId() string {
@@ -89,8 +97,8 @@ func generateControllerName() string {
 	return nameGenerator.Generate()
 }
 
-func (wf *Controller) ReturnControllerData(w http.ResponseWriter, r *http.Request) {
+func (c *Controller) ReturnControllerData(w http.ResponseWriter, r *http.Request) {
 
 	// decode controller data to json
-	json.NewEncoder(w).Encode(wf)
+	json.NewEncoder(w).Encode(c)
 }

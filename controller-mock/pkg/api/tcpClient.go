@@ -14,7 +14,7 @@ const (
 	TYPE = "tcp"
 )
 
-func SendControllerDataOverTCP(wf *controller.Controller) {
+func SendControllerDataOverTCP(c *controller.Controller) {
 
 	// define tcp address
 	tcpServer, err := net.ResolveTCPAddr(TYPE, HOST+":"+PORT)
@@ -30,13 +30,13 @@ func SendControllerDataOverTCP(wf *controller.Controller) {
 	defer conn.Close()
 
 	// convert controller struct to json packet
-	wfJson, err := json.Marshal(wf)
+	cJson, err := json.Marshal(c)
 	if err != nil {
 		log.Fatalf("Marshaling controller data to JSON failed: %s", err)
 	}
 
 	// write message through network connection
-	_, err = conn.Write([]byte(wfJson))
+	_, err = conn.Write([]byte(cJson))
 	if err != nil {
 		log.Fatalf("Write data failed: %s", err)
 	}

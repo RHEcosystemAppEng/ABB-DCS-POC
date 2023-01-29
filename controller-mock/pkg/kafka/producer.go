@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/RHEcosystemAppEng/abb-dcs-poc/controller-mock/pkg/controller"
@@ -14,7 +15,8 @@ import (
 )
 
 const (
-	HTTP_KAFKA_URL          = "http://my-bridge-bridge-route-abb-poc.apps.abb-cl01.appeng.rhecoeng.com/topics/%s"
+	HTTP_KAFKA_URL_TO_TOPIC = "%s/topics/%s"
+	HTTP_KAFKA_URL_ENV_VAR  = "HTTP_KAFKA_URL"
 	HTTP_KAFKA_CONTENT_TYPE = "application/vnd.kafka.json.v2+json"
 	HTTP_KAFKA_MSG_WRAPPER  = "{\"records\":[{\"key\": \"%s\",\"value\": %s}]}"
 )
@@ -27,16 +29,17 @@ type KafkaMessage struct {
 }
 
 type Metric struct {
-	Name  string  `json:"name"`
-	Value float64 `json:"value"`
+	Name      string    `json:"name"`
+	Value     float64   `json:"value"`
+	Timestamp time.Time `json:"timestamp"`
 }
 
-func HTTPKafkaProducer(wf *controller.Controller) {
+func HTTPKafkaProducer(c *controller.Controller) {
 
-	for _, metric := range wf.Metrics {
+	for _, metric := range c.Metrics {
 
 		// init kafka message struct
-		kafkaMsg := newKafkaMessage(wf, metric)
+		kafkaMsg := newKafkaMessage(c, metric)
 
 		// marshal kafka message struct to json and add json wrapper
 		kafkaMsgJson := kafkaMsg.buildBody()
@@ -45,7 +48,7 @@ func HTTPKafkaProducer(wf *controller.Controller) {
 		bufferKafkaMsgJson := bytes.NewBuffer([]byte(kafkaMsgJson))
 
 		// send kafka message over kafka using http protocol, wait for response
-		resp, err := http.Post(fmt.Sprintf(HTTP_KAFKA_URL, metric.Name), HTTP_KAFKA_CONTENT_TYPE, bufferKafkaMsgJson)
+		resp, err := http.Post(fmt.Sprintf(HTTP_KAFKA_URL_TO_TOPIC, os.Getenv(HTTP_KAFKA_URL_ENV_VAR), metric.Name), HTTP_KAFKA_CONTENT_TYPE, bufferKafkaMsgJson)
 		if err != nil {
 			log.Fatalf("Posting kafka message data over HTTP failed: %s", err)
 		}
@@ -60,15 +63,16 @@ func HTTPKafkaProducer(wf *controller.Controller) {
 	}
 }
 
-func newKafkaMessage(wf *controller.Controller, metric *controller.Metric) *KafkaMessage {
+func newKafkaMessage(c *controller.Controller, metric *controller.Metric) *KafkaMessage {
 
 	km := KafkaMessage{
-		ControllerId:   wf.ControllerId,
-		ControllerName: wf.ControllerName,
-		Timestamp:      wf.Timestamp,
+		ControllerId:   c.ControllerId,
+		ControllerName: c.ControllerName,
+		Timestamp:      c.Timestamp,
 		Metric: Metric{
-			Name:  metric.Name,
-			Value: metric.Value,
+			Name:      metric.Name,
+			Value:     metric.Value,
+			Timestamp: metric.Timestamp,
 		},
 	}
 

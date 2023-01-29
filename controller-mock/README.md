@@ -9,8 +9,8 @@ A Controller monitors workflows in production cycles and collects statuses from 
 * Motor Power Consumption
 
 ## Functionality
-Reports to the Processor every <time interval> over a Kafka bridge using HTTP with new metric data. 
-Following a deterministic approach, starting from the lowest range limit, with every <time interval>, the metric data will be incremented by one unit, up until reaching the top range limit. Whereas then it will be decremented by one unit until the lowest range limit has been reached. From this point the process will be repeated indefinitely.
+Reports to the Processor every \<time interval\> over a Kafka bridge using HTTP with new metric data. 
+Following a deterministic approach, starting from the lowest range limit, with every \<time interval\>, the metric data will be incremented by one unit, up until reaching the top range limit. Whereas then it will be decremented by one unit until the lowest range limit has been reached. From this point the process will be repeated indefinitely.
 
 * Motor temperature
     * range: 70 degrees - 85 degrees
@@ -38,93 +38,69 @@ Initial metrics configuration [JSON file](pkg/controller/initial_metrics_config.
 Type: JSON packet with controller data and timestamp 
 ```json
 {
-    "records":
-    [
+    "value": 
+    {
+        "controller_id": <id>,
+        "controller_name": <name>,
+        "timestamp": <now>,
+        "metric":
         {
-            "key": <uuid>,
-            "value": 
-            {
-                "controller_id": <id>,
-                "controller_name": <name>,
-                "timestamp": <now>,
-                "metric":
-                {
-                    "name":"motor_temperature",
-                    "value":70
-                }
-            }
+            "name":"motor_temperature",
+            "value":70
         }
-    ]
+    }
 }
 ```
 ``` json
 {
-    "records":
-    [
+    "value": 
+    {
+        "controller_id": <id>,
+        "controller_name": <name>,
+        "timestamp": <now>,
+        "metric":
         {
-            "key": <uuid>,
-            "value": 
-            {
-                "controller_id": <id>,
-                "controller_name": <name>,
-                "timestamp": <now>,
-                "metric":
-                {
-                    "name":"motor_speed",
-                    "value":5000
-                }
-            }
+            "name":"motor_speed",
+            "value":5000
         }
-    ]
+    }
 }
 ```
 ```json
 {
-    "records":
-    [
+    "value": 
+    {
+        "controller_id": <id>,
+        "controller_name": <name>,
+        "timestamp": <now>,
+        "metric":
         {
-            "key": <uuid>,
-            "value": 
-            {
-                "controller_id": <id>,
-                "controller_name": <name>,
-                "timestamp": <now>,
-                "metric":
-                {
-                    "name":"motor_noise",
-                    "value":90
-                }
-            }
+            "name":"motor_noise",
+            "value":90
         }
-    ]
+    }
 }
 ```
 ```json
 {
-    "records":
-    [
+    "value": 
+    {
+        "controller_id": <id>,
+        "controller_name": <name>,
+        "timestamp": <now>,
+        "metric":
         {
-            "key": <uuid>,
-            "value": 
-            {
-                "controller_id": <id>,
-                "controller_name": <name>,
-                "timestamp": <now>,
-                "metric":
-                {
-                    "name":"motor_power_consumption",
-                    "value":14
-                }
-            }
+            "name":"motor_power_consumption",
+            "value":14
         }
-    ]
+    }
 }
 ```
 
 ## Run Program
 From current directory run:
 ```bash
-go run main.go
+export HTTP_KAFKA_URL=[URL]; go run main.go
 ```
 
 ## Build Docker Image

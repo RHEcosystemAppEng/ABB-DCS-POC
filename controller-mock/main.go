@@ -14,10 +14,10 @@ const (
 func main() {
 
 	// init controller with initial metrics data
-	wf := controller.InitController()
+	c := controller.InitController()
 
 	// route initial controller data over kafka
-	kafka.HTTPKafkaProducer(wf)
+	kafka.HTTPKafkaProducer(c)
 
 	// in an endless loop, every time interval, promote controller metrics data and send to server over kafka
 	for {
@@ -26,15 +26,15 @@ func main() {
 		time.Sleep(TIME_INTERVAL * time.Second)
 
 		// promote controller metrics data
-		wf.PromoteControllerMetrics()
+		c.PromoteControllerMetrics()
 
 		// route controller data with promoted metrics over kafka
-		kafka.HTTPKafkaProducer(wf)
+		kafka.HTTPKafkaProducer(c)
 	}
 
 	// // route initial controller data over tcp
-	// api.SendControllerDataOverTCP(wf)
+	// api.SendControllerDataOverTCP(c)
 
 	// // route controller data over http
-	// api.HandleHttpRequests(wf)
+	// api.HandleHttpRequests(c)
 }

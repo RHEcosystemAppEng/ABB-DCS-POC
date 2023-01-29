@@ -1,5 +1,7 @@
 package controller
 
+import "time"
+
 const (
 	INCREMENT = "increment"
 	DECREMENT = "decrement"
@@ -11,15 +13,16 @@ type Metric struct {
 	RangeMin  float64 `json:"range_min"`
 	RangeMax  float64 `json:"range_max"`
 	FluctUnit float64 `json:"fluct_unit"`
-	Strategy  string  `json:"strategy"`
+	Strategy  string
+	Timestamp time.Time
 }
 
 func (m *Metric) determineMetricStrategy() {
 
-	if m.Value == m.RangeMax {
+	if m.Value >= m.RangeMax {
 		// if metric has reached maximum range limit, change strategy to decrement
 		m.Strategy = DECREMENT
-	} else if m.Value == m.RangeMin {
+	} else if m.Value <= m.RangeMin {
 		// if metric has reached minimum range limit, change strategy to increment
 		m.Strategy = INCREMENT
 	}
