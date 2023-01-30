@@ -46,7 +46,8 @@ Type: JSON packet with controller data and timestamp
         "metric":
         {
             "name":"motor_temperature",
-            "value":70
+            "value":70,
+            "timestamp": <now>
         }
     }
 }
@@ -61,7 +62,8 @@ Type: JSON packet with controller data and timestamp
         "metric":
         {
             "name":"motor_speed",
-            "value":5000
+            "value":5000,
+            "timestamp": <now>
         }
     }
 }
@@ -76,7 +78,8 @@ Type: JSON packet with controller data and timestamp
         "metric":
         {
             "name":"motor_noise",
-            "value":90
+            "value":90,
+            "timestamp": <now>
         }
     }
 }
@@ -91,7 +94,8 @@ Type: JSON packet with controller data and timestamp
         "metric":
         {
             "name":"motor_power_consumption",
-            "value":14
+            "value":14,
+            "timestamp": <now>
         }
     }
 }
