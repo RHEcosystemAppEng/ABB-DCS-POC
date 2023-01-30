@@ -97,7 +97,7 @@ Type: JSON packet with controller data and timestamp
 }
 ```
 
-## Run Program
+## Run Program Locally
 From current directory run:
 ```bash
 export HTTP_KAFKA_URL=[URL]; go run main.go
@@ -113,4 +113,12 @@ podman build -t [NAME:TAG] -f ./docker .
 * Using Docker
 ```bash
 docker build -t [NAME:TAG] -f ./docker/Dockerfile .
+```
+
+## Run Program On Multiple Containers
+
+Using [Docker Compose](https://docs.docker.com/get-started/08_using_compose/) we can run multiple instances of the controller application on docker containers.
+To start docker containers, run:
+```bash
+KAFKA_URL=[URL] IMAGE=[NAME:TAG] docker-compose -f docker/docker-compose.yaml up --scale controller=[NUMBER_OF_REPLICAS]
 ```
