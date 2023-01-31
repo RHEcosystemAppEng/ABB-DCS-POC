@@ -9,8 +9,8 @@ A Controller monitors workflows in production cycles and collects statuses from 
 * Motor Power Consumption
 
 ## Functionality
-Reports to the Processor every <time interval> with new metric data. 
-Following a deterministic approach, starting from the lowest range limit, with every <time interval>, the metric data will be incremented by one unit, up until reaching the top range limit. Whereas then it will be decremented by one unit until the lowest range limit has been reached. From this point the process will be repeated indefinitely.
+Reports to the Processor every \<time interval\> over a Kafka bridge using HTTP with new metric data. 
+Following a deterministic approach, starting from the lowest range limit, with every \<time interval\>, the metric data will be incremented by one unit, up until reaching the top range limit. Whereas then it will be decremented by one unit until the lowest range limit has been reached. From this point the process will be repeated indefinitely.
 
 * Motor temperature
     * range: 70 degrees - 85 degrees
@@ -28,33 +28,83 @@ Following a deterministic approach, starting from the lowest range limit, with e
 
 
 ## Components
-* Workflow - holds data on the monitored workflow and data on all related metrics
-* Api - sents workflow data to Processor-mock over a tcp network
+* Controller - Generates metric data and promotes it by predefined configuration standards every single time interval
+* Kafka - The Kafka Producer allocates each message containing metric data to a corresponding topic partition and sends it over HTTP to a Kafka cluster to be later consumed by the Processor-mock
 
 ## Input
-None
+Initial metrics configuration [JSON file](pkg/controller/initial_metrics_config.json)
 
 ## Output
-Type: JSON packet with workflow data and timestamp 
+Type: JSON packet with controller data and timestamp 
 ```json
 {
-    "workflow_Id": <uuid>,
-    "timestamp": <now>,
-    "metrics": {
-        "motor_temperature": {
-            "value":70
-        },
-        "motor_speed": {
-            "value":5000
-        },
-        "motor_noise": {
-            "value":90
-        },
-        "motor_power_consumption": {
-            "value":14
+    "value": 
+    {
+        "controller_id": <id>,
+        "controller_name": <name>,
+        "timestamp": <now>,
+        "metric":
+        {
+            "name":"motor_temperature",
+            "value":70,
+            "timestamp": <now>
         }
     }
 }
+```
+``` json
+{
+    "value": 
+    {
+        "controller_id": <id>,
+        "controller_name": <name>,
+        "timestamp": <now>,
+        "metric":
+        {
+            "name":"motor_speed",
+            "value":5000,
+            "timestamp": <now>
+        }
+    }
+}
+```
+```json
+{
+    "value": 
+    {
+        "controller_id": <id>,
+        "controller_name": <name>,
+        "timestamp": <now>,
+        "metric":
+        {
+            "name":"motor_noise",
+            "value":90,
+            "timestamp": <now>
+        }
+    }
+}
+```
+```json
+{
+    "value": 
+    {
+        "controller_id": <id>,
+        "controller_name": <name>,
+        "timestamp": <now>,
+        "metric":
+        {
+            "name":"motor_power_consumption",
+            "value":14,
+            "timestamp": <now>
+        }
+    }
+}
+```
+
+## Run Program Locally
+From current directory run:
+```bash
+export HTTP_KAFKA_URL=[URL]; go run main.go
 ```
 
 ## Build Docker Image
@@ -67,4 +117,12 @@ podman build -t [NAME:TAG] -f ./docker .
 * Using Docker
 ```bash
 docker build -t [NAME:TAG] -f ./docker/Dockerfile .
+```
+
+## Run Program On Multiple Containers
+
+Using [Docker Compose](https://docs.docker.com/get-started/08_using_compose/) we can run multiple instances of the controller application on docker containers.
+To start docker containers, run:
+```bash
+KAFKA_URL=[URL] IMAGE=[NAME:TAG] docker-compose -f docker/docker-compose.yaml up --scale controller=[NUMBER_OF_REPLICAS]
 ```

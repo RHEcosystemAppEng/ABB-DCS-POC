@@ -8,10 +8,10 @@ The Processor consumes data received from the Controller and aggregates it. This
 * Conveyor - passes data to prometheus/ storage
 
 ## Input
-Type: JSON packet with workflow data and timestamp 
+Type: JSON packet with controller data and timestamp 
 ```json
 {
-    "workflow_Id": <uuid>,
+    "controller_name": <name>,
     "timestamp": <now>,
     "metrics": {
         "motor_temperature": {
