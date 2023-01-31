@@ -36,7 +36,7 @@
   var connected = false;
   var socket;
   var gauge = new LinearGauge({
-    renderTo: 'temperature-canvas',
+    renderTo: document.getElementById('temperature-canvas'),
     title: "Temperature",
     width: 160,
     height: 600,
@@ -50,7 +50,7 @@
     animationDuration: 500
   });
   var speedGauge = new RadialGauge({
-    renderTo: 'speed-canvas',
+    renderTo: document.getElementById('speed-canvas'),
     title: "Speed",
     width: 300,
     height: 300,
@@ -92,7 +92,7 @@
     animationDuration: 500
   });
   var noiseGauge = new LinearGauge({
-    renderTo: 'noise-canvas',
+    renderTo: document.getElementById('noise-canvas'),
     title: "Noise level",
     width: 400,
     height: 150,
@@ -127,7 +127,7 @@
     ticksWidthMinor: 15
   })
   var powerGauge = new RadialGauge({
-    renderTo: 'power-canvas',
+    renderTo: document.getElementById('power-canvas'),
     title: "Power",
     width: 300,
     height: 300,

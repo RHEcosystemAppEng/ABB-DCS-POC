@@ -1,6 +1,0 @@
-go 1.19
-
-use (
-	./controller-mock
-	./processor-mock
-)
