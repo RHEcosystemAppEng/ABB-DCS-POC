@@ -5,7 +5,7 @@ import (
 	"log"
 	"net"
 
-	"github.com/RHEcosystemAppEng/abb-dcs-poc/controller-mock/pkg/workflow"
+	"github.com/RHEcosystemAppEng/abb-dcs-poc/controller-mock/pkg/controller"
 )
 
 const (
@@ -14,7 +14,7 @@ const (
 	TYPE = "tcp"
 )
 
-func SendWorkflowDataOverTCP(wf *workflow.Workflow) {
+func SendControllerDataOverTCP(c *controller.Controller) {
 
 	// define tcp address
 	tcpServer, err := net.ResolveTCPAddr(TYPE, HOST+":"+PORT)
@@ -29,14 +29,14 @@ func SendWorkflowDataOverTCP(wf *workflow.Workflow) {
 	}
 	defer conn.Close()
 
-	// convert workflow struct to json packet
-	wfJson, err := json.Marshal(wf)
+	// convert controller struct to json packet
+	cJson, err := json.Marshal(c)
 	if err != nil {
-		log.Fatalf("Marshaling workflow data to JSON failed: %s", err)
+		log.Fatalf("Marshaling controller data to JSON failed: %s", err)
 	}
 
 	// write message through network connection
-	_, err = conn.Write([]byte(wfJson))
+	_, err = conn.Write([]byte(cJson))
 	if err != nil {
 		log.Fatalf("Write data failed: %s", err)
 	}

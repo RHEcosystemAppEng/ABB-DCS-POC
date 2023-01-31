@@ -1,0 +1,7 @@
+version: "3"
+
+services:
+  controller:
+    image: ${IMAGE}
+    environment:
+      HTTP_KAFKA_URL: ${KAFKA_URL}

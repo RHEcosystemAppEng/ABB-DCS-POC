@@ -1,0 +1,32 @@
+{
+    "metrics": [
+        {
+            "name": "motor_temperature",
+            "value": 70,
+            "range_min": 70,
+            "range_max": 85,
+            "fluct_unit": 1
+        },
+        {
+            "name": "motor_speed",
+            "value": 5000,
+            "range_min": 5000,
+            "range_max": 6500,
+            "fluct_unit": 100
+        },
+        {
+            "name": "motor_noise",
+            "value": 90,
+            "range_min": 90,
+            "range_max": 97,
+            "fluct_unit": 0.5
+        },
+        {
+            "name": "motor_power_consumption",
+            "value": 14,
+            "range_min": 14,
+            "range_max": 21.5,
+            "fluct_unit": 0.5
+        }
+    ]
+}
