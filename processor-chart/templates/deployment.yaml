@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "processor-chart.fullname" . }}
-  namespace: {{.Values.namespace}}
+  namespace: {{.Values.namespace }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
@@ -26,3 +26,7 @@ spec:
             - name: http
               containerPort: 8080
               protocol: TCP
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
