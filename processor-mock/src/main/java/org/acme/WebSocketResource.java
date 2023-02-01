@@ -1,10 +1,14 @@
 package org.acme;
 
 import io.quarkus.scheduler.Scheduled;
+
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.faulttolerance.Retry;
 import org.eclipse.microprofile.reactive.messaging.Incoming;
 import org.eclipse.microprofile.reactive.messaging.Message;
 import org.jboss.logging.Logger;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.websocket.OnClose;
@@ -12,6 +16,7 @@ import javax.websocket.OnError;
 import javax.websocket.OnOpen;
 import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -21,8 +26,14 @@ import java.util.concurrent.ConcurrentHashMap;
 @ServerEndpoint("/api/metrics")
 @ApplicationScoped
 public class WebSocketResource {
-
+    
     private static final Logger LOGGER = Logger.getLogger(WebSocketResource.class);
+
+    @ConfigProperty(name = "version")
+    private String processorVersion;
+
+    private JSONParser parser = new JSONParser();
+    private JSONObject json = new JSONObject();
 
     // @todo do we need to use a redis cluster instead of hashmap?
     Map<String, Session> activeSessions = new ConcurrentHashMap<>();
@@ -74,8 +85,21 @@ public class WebSocketResource {
         sessionsToBeRemoved.clear();
     }
 
+    private String parseMessage(String message) {
+
+        try {
+            json = (JSONObject) parser.parse(message);
+            json.put("version", processorVersion);
+        } catch (org.json.simple.parser.ParseException e) {
+            LOGGER.error(e.getMessage());
+        }
+        
+        return json.toString();
+    }
+
     private void broadcast(String message) {
-        activeSessions.forEach((key, value) -> value.getAsyncRemote().sendObject(message, result -> {
+        String versionedMessage = parseMessage(message);
+        activeSessions.forEach((key, value) -> value.getAsyncRemote().sendObject(versionedMessage, result -> {
             if (result.getException() != null) {
                 sessionsToBeRemoved.add(key);
                 LOGGER.debug("Unable to send message: " + result.getException());
