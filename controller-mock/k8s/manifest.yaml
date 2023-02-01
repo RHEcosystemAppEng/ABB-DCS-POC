@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: abb-poc-controller
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: controller
+  template:
+    metadata:
+      labels:
+        app: controller
+    spec:
+      containers:
+      - name: controller-container
+        image: quay.io/ecosystem-appeng/abb-poc-controller:1.0.2
+        env:
+        - name: HTTP_KAFKA_URL
+          value: ???
