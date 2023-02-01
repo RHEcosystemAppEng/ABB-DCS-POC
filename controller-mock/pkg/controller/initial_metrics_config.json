@@ -2,32 +2,32 @@
     "metrics": [
         {
             "name": "motor_temperature",
-            "value": 25,
+            "value": 20,
             "range_min": 30,
-            "range_max": 95,
-            "fluct_unit": 12,
+            "range_max": 100,
+            "fluct_unit": 10,
             "unit": "°C"
         },
         {
             "name": "motor_speed",
             "value": 50,
-            "range_min": 5,
-            "range_max": 220,
+            "range_min": 50,
+            "range_max": 215,
             "fluct_unit": 15,
             "unit": "rpm"
         },
         {
             "name": "motor_noise",
-            "value": 20,
+            "value": 10,
             "range_min": 10,
-            "range_max": 95,
+            "range_max": 90,
             "fluct_unit": 8,
             "unit": "dB"
         },
         {
             "name": "motor_power_consumption",
             "value": 140,
-            "range_min": 100,
+            "range_min": 140,
             "range_max": 240,
             "fluct_unit": 25,
             "unit": "W"
