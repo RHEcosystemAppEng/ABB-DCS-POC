@@ -31,6 +31,9 @@ type KafkaMessage struct {
 type Metric struct {
 	Name      string    `json:"name"`
 	Value     float64   `json:"value"`
+	MinValue  float64   `json:"min_value"`
+	MaxValue  float64   `json:"max_value"`
+	Unit      string    `json:"unit"`
 	Timestamp time.Time `json:"timestamp"`
 }
 
@@ -46,7 +49,7 @@ func HTTPKafkaProducer(c *controller.Controller) {
 
 		// buffer kafka message
 		bufferKafkaMsgJson := bytes.NewBuffer([]byte(kafkaMsgJson))
-
+		//fmt.Println(bufferKafkaMsgJson)
 		// send kafka message over kafka using http protocol, wait for response
 		resp, err := http.Post(fmt.Sprintf(HTTP_KAFKA_URL_TO_TOPIC, os.Getenv(HTTP_KAFKA_URL_ENV_VAR), metric.Name), HTTP_KAFKA_CONTENT_TYPE, bufferKafkaMsgJson)
 		if err != nil {
@@ -55,7 +58,7 @@ func HTTPKafkaProducer(c *controller.Controller) {
 		defer resp.Body.Close()
 
 		// print response
-		log.Println(resp.Status)
+		//log.Println(resp.Status)
 		bodyAnswer := bufio.NewScanner(resp.Body)
 		for bodyAnswer.Scan() {
 			log.Println(bodyAnswer.Text())
@@ -72,6 +75,9 @@ func newKafkaMessage(c *controller.Controller, metric *controller.Metric) *Kafka
 		Metric: Metric{
 			Name:      metric.Name,
 			Value:     metric.Value,
+			MinValue:  metric.RangeMin,
+			MaxValue:  metric.RangeMax,
+			Unit:      metric.Unit,
 			Timestamp: metric.Timestamp,
 		},
 	}

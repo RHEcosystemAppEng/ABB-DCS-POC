@@ -13,6 +13,7 @@ type Metric struct {
 	RangeMin  float64 `json:"range_min"`
 	RangeMax  float64 `json:"range_max"`
 	FluctUnit float64 `json:"fluct_unit"`
+	Unit      string  `json:"unit"`
 	Strategy  string
 	Timestamp time.Time
 }

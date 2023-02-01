@@ -38,24 +38,19 @@ Initial metrics configuration [JSON file](pkg/controller/initial_metrics_config.
 Type: JSON packet with controller data and timestamp 
 ```json
 {
-    "value": 
-    {
-        "controller_id": <id>,
-        "controller_name": <name>,
-        "timestamp": <now>,
-        "metric":
-        {
-            "name":"motor_temperature",
-            "value":70,
-            "timestamp": <now>
-        }
-    }
+  "controller_id": <id>,
+  "controller_name": <name>,
+  "timestamp": <now>,
+  "metric":
+  {
+    "name":"motor_temperature",
+    "value":70,
+    "timestamp": <now>
+  }
 }
 ```
 ``` json
 {
-    "value": 
-    {
         "controller_id": <id>,
         "controller_name": <name>,
         "timestamp": <now>,
@@ -66,38 +61,31 @@ Type: JSON packet with controller data and timestamp
             "timestamp": <now>
         }
     }
+```
+```json
+{
+  "controller_id": <id>,
+  "controller_name": <name>,
+  "timestamp": <now>,
+  "metric":
+  {
+    "name":"motor_noise",
+    "value":90,
+    "timestamp": <now>
+  }
 }
 ```
 ```json
 {
-    "value": 
-    {
-        "controller_id": <id>,
-        "controller_name": <name>,
-        "timestamp": <now>,
-        "metric":
-        {
-            "name":"motor_noise",
-            "value":90,
-            "timestamp": <now>
-        }
-    }
-}
-```
-```json
-{
-    "value": 
-    {
-        "controller_id": <id>,
-        "controller_name": <name>,
-        "timestamp": <now>,
-        "metric":
-        {
-            "name":"motor_power_consumption",
-            "value":14,
-            "timestamp": <now>
-        }
-    }
+  "controller_id": <id>,
+  "controller_name": <name>,
+  "timestamp": <now>,
+  "metric":
+  {
+    "name":"motor_power_consumption",
+    "value":14,
+    "timestamp": <now>
+  }
 }
 ```
 
