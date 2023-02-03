@@ -32,9 +32,6 @@ public class WebSocketResource {
     @ConfigProperty(name = "version")
     private String processorVersion;
 
-    private JSONParser parser = new JSONParser();
-    private JSONObject json = new JSONObject();
-
     // @todo do we need to use a redis cluster instead of hashmap?
     Map<String, Session> activeSessions = new ConcurrentHashMap<>();
     List<String> sessionsToBeRemoved = new ArrayList<>();
@@ -86,11 +83,13 @@ public class WebSocketResource {
     }
 
     private String parseMessage(String message) {
-
+        JSONParser parser = new JSONParser();
+        JSONObject json = new JSONObject();
         try {
             json = (JSONObject) parser.parse(message);
             json.put("version", processorVersion);
-        } catch (org.json.simple.parser.ParseException e) {
+        } catch (Exception e) {
+            LOGGER.info("Received message that could not parse: " + message);
             LOGGER.error(e.getMessage());
         }
         

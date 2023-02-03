@@ -5,7 +5,7 @@
 replicaCount: 3
 namespace: abb-poc
 image: quay.io/ecosystem-appeng/abb-poc-processor
-image_tag: 1.0.4
+image_tag: 1.0.8
 kafka_bootstrap_server: my-cluster-kafka-bootstrap:9095
 kafka_jaas_config: ???
 affinity:

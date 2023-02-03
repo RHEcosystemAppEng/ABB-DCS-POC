@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: controller-container
-        image: quay.io/ecosystem-appeng/abb-poc-controller:1.0.2
+        image: quay.io/ecosystem-appeng/abb-poc-controller:1.0.4
         env:
         - name: HTTP_KAFKA_URL
           value: ???
