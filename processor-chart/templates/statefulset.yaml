@@ -1,5 +1,5 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: {{ include "processor-chart.fullname" . }}
   namespace: {{.Values.namespace }}
@@ -8,6 +8,7 @@ spec:
   selector:
     matchLabels:
       app: processor
+  serviceName: {{ include "processor-chart.fullname" . }}
   template:
     metadata:
       labels:
