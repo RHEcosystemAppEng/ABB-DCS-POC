@@ -75,12 +75,18 @@ func sendKafkaMsgWithRetries(metricName string, bufferKafkaMsgJson *bytes.Buffer
 		resp, err = sendKafkaMsg(metricName, bufferKafkaMsgJson)
 
 		// if post successful, break loop
-		if err == nil {
+		if err == nil && resp.StatusCode < 500 {
 			break
 		}
 
 		// if error, log error message
-		log.Printf("Posting kafka message data over HTTP failed: %s", err)
+		log.Print("Posting kafka message data over HTTP failed")
+		if err != nil {
+			log.Printf("Error: %v", err)
+		}
+		if resp != nil {
+			log.Printf("StatusCode: %v", resp.Status)
+		}
 
 		// if retry time interval scheduled, sleep
 		if i < len(backoffSchedule) {
@@ -92,8 +98,8 @@ func sendKafkaMsgWithRetries(metricName string, bufferKafkaMsgJson *bytes.Buffer
 	}
 
 	// if all retries failed, panic
-	if err != nil {
-		log.Fatalf("All retries failed, posting kafka message data over HTTP fatal: %s", err)
+	if err != nil || resp.StatusCode >= 500 {
+		log.Fatal("All retries failed, posting kafka message data over HTTP fatal")
 	}
 
 	// print response
@@ -141,7 +147,7 @@ func (msg *KafkaMessage) buildBody() string {
 	// marshal kafka message struct to json
 	kafkaMsgJson, err := json.Marshal(msg)
 	if err != nil {
-		log.Fatalf("Marshaling kafka message data to JSON failed: %s", err)
+		log.Fatalf("Marshaling kafka message data to JSON failed: %v", err)
 	}
 
 	// add json wrapper to kafka message
