@@ -1,0 +1,18 @@
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  labels:
+    operators.coreos.com/amq-streams.abb-poc: ""
+  name: {{ .Values.kafka.subscription.operatorName }}
+  namespace: {{ .Values.namespace }}
+  annotations:
+    "helm.sh/hook": pre-install
+    "helm.sh/hook-weight": "1"
+    "helm.sh/hook-delete-policy": before-hook-creation
+spec:
+  channel: {{ .Values.kafka.subscription.channel }}
+  installPlanApproval: {{ .Values.kafka.subscription.installPlanApproval }}
+  name: {{ .Values.kafka.subscription.operatorName }}
+  source: {{ .Values.kafka.subscription.source }}
+  sourceNamespace: {{ .Values.kafka.subscription.sourceNamespace }}
+  startingCSV: {{ .Values.kafka.subscription.startingCSV }}

@@ -1,0 +1,21 @@
+# Default values for ui.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 3
+
+fullnameOverride: "abb-ui"
+namespace: abb-poc
+
+image:
+  repository: quay.io/rawagner/abb-poc
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: latest
+
+port: 
+  containerPort: 3000
+  protocol: TCP
+
+service:
+  port: 80

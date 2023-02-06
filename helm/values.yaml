@@ -1,0 +1,9 @@
+# Default values for helm.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+ui:
+  namespace: abb-test
+
+processor:
+  namespace: abb-test
