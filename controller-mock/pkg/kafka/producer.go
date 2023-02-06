@@ -1,7 +1,6 @@
 package kafka
 
 import (
-	"bufio"
 	"bytes"
 	"encoding/json"
 	"fmt"
@@ -20,6 +19,12 @@ const (
 	HTTP_KAFKA_CONTENT_TYPE = "application/vnd.kafka.json.v2+json"
 	HTTP_KAFKA_MSG_WRAPPER  = "{\"records\":[{\"key\": \"%s\",\"value\": %s}]}"
 )
+
+var backoffSchedule = []time.Duration{
+	1 * time.Second,
+	3 * time.Second,
+	5 * time.Second,
+}
 
 type KafkaMessage struct {
 	ControllerId   string    `json:"controller_id"`
@@ -49,21 +54,73 @@ func HTTPKafkaProducer(c *controller.Controller) {
 
 		// buffer kafka message
 		bufferKafkaMsgJson := bytes.NewBuffer([]byte(kafkaMsgJson))
-		//fmt.Println(bufferKafkaMsgJson)
-		// send kafka message over kafka using http protocol, wait for response
-		resp, err := http.Post(fmt.Sprintf(HTTP_KAFKA_URL_TO_TOPIC, os.Getenv(HTTP_KAFKA_URL_ENV_VAR), metric.Name), HTTP_KAFKA_CONTENT_TYPE, bufferKafkaMsgJson)
-		if err != nil {
-			log.Fatalf("Posting kafka message data over HTTP failed: %s", err)
-		}
-		defer resp.Body.Close()
+		// fmt.Println(bufferKafkaMsgJson)
 
-		// print response
-		//log.Println(resp.Status)
-		bodyAnswer := bufio.NewScanner(resp.Body)
-		for bodyAnswer.Scan() {
-			log.Println(bodyAnswer.Text())
+		// send kafka message with retries according to backoff schedule
+		sendKafkaMsgWithRetries(metric.Name, bufferKafkaMsgJson)
+	}
+}
+
+func sendKafkaMsgWithRetries(metricName string, bufferKafkaMsgJson *bytes.Buffer) {
+
+	var (
+		err  error
+		resp *http.Response
+	)
+
+	// for each retry time interval in backoff schedule, try to send kafka message
+	for i := 0; i <= len(backoffSchedule); i++ {
+
+		// send kafka message
+		resp, err = sendKafkaMsg(metricName, bufferKafkaMsgJson)
+
+		// if post successful, break loop
+		if err == nil && resp.StatusCode < 500 {
+			break
+		}
+
+		// if error, log error message
+		log.Print("Posting kafka message data over HTTP failed")
+		if err != nil {
+			log.Printf("Error: %v", err)
+		}
+		if resp != nil {
+			log.Printf("StatusCode: %v", resp.Status)
+		}
+
+		// if retry time interval scheduled, sleep
+		if i < len(backoffSchedule) {
+
+			log.Printf("Retrying in %v\n", backoffSchedule[i])
+			time.Sleep(backoffSchedule[i])
+
 		}
 	}
+
+	// if all retries failed, panic
+	if err != nil || resp.StatusCode >= 500 {
+		log.Fatal("All retries failed, posting kafka message data over HTTP fatal")
+	}
+
+	// print response
+	log.Println(resp.Status)
+}
+
+func sendKafkaMsg(metricName string, bufferKafkaMsgJson *bytes.Buffer) (*http.Response, error) {
+
+	// send kafka message over kafka bridge using http protocol
+	resp, err := http.Post(fmt.Sprintf(HTTP_KAFKA_URL_TO_TOPIC, os.Getenv(HTTP_KAFKA_URL_ENV_VAR), metricName), HTTP_KAFKA_CONTENT_TYPE, bufferKafkaMsgJson)
+
+	// if error, return error
+	if err != nil {
+		return nil, err
+	}
+
+	// close body at end of transaction
+	defer resp.Body.Close()
+
+	// return response
+	return resp, nil
 }
 
 func newKafkaMessage(c *controller.Controller, metric *controller.Metric) *KafkaMessage {
@@ -90,7 +147,7 @@ func (msg *KafkaMessage) buildBody() string {
 	// marshal kafka message struct to json
 	kafkaMsgJson, err := json.Marshal(msg)
 	if err != nil {
-		log.Fatalf("Marshaling kafka message data to JSON failed: %s", err)
+		log.Fatalf("Marshaling kafka message data to JSON failed: %v", err)
 	}
 
 	// add json wrapper to kafka message
