@@ -1,13 +1,13 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: processor-service
-  namespace: {{.Values.namespace}}
+  name: {{ .Values.global.processor.service.name }}
+  namespace: {{ .Values.global.namespace }}
 spec:
-  type: ClusterIP
+  type: {{ .Values.service.type }}
   selector:
-    app: processor
+    {{- include "processor-chart.selectorLabels" . | nindent 4 }}
   ports:
-    - name: http
-      port: 8080
-      targetPort: 8080
+    - name: {{ .Values.service.ports.name }}
+      port: {{ .Values.global.processor.service.ports.port }}
+      targetPort: {{ .Values.service.ports.targetPort }}

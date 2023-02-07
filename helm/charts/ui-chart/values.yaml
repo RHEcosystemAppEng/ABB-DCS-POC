@@ -2,13 +2,11 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
+fullnameOverride: abb-poc-ui
 replicaCount: 3
 
-fullnameOverride: "abb-ui"
-namespace: abb-poc
-
 image:
-  repository: quay.io/rawagner/abb-poc
+  repository: quay.io/ecosystem-appeng/abb-ui
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: latest
@@ -19,3 +17,7 @@ port:
 
 service:
   port: 80
+
+engineering:
+  serviceName: abb-engineering
+  servicePort: 10000

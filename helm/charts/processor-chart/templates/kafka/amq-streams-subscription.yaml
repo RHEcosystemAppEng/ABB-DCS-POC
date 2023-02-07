@@ -4,7 +4,7 @@ metadata:
   labels:
     operators.coreos.com/amq-streams.abb-poc: ""
   name: {{ .Values.kafka.subscription.operatorName }}
-  namespace: {{ .Values.namespace }}
+  namespace: {{ .Values.global.namespace }}
   annotations:
     "helm.sh/hook": pre-install
     "helm.sh/hook-weight": "1"

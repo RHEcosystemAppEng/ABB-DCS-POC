@@ -2,12 +2,12 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "ui.fullname" . }}
-  namespace: {{ .Values.namespace }}
+  namespace: {{ .Values.global.namespace }}
 spec:
+  replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
       {{- include "ui.selectorLabels" . | nindent 6 }}
-  replicas: {{ .Values.replicaCount }}
   template:
     metadata:
       labels:
@@ -16,11 +16,12 @@ spec:
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - containerPort: {{ .Values.port.containerPort }}
               protocol: {{ .Values.port.protocol }}
           env:
             - name: PROCESSOR_SERVICE
-              value: 'ws://processor-service.abb-poc.svc.cluster.local:8080'
+              value: {{ include "ui.buildProcessorServiceUrl" . }}
             - name: ENGINEERING_SERVICE
-              value: 'http://abb-engineering.abb-poc.svc.cluster.local:10000'
+              value: {{ include "ui.buildEngineeringServiceUrl" . }}

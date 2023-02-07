@@ -2,33 +2,37 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: {{ include "processor-chart.fullname" . }}
-  namespace: {{.Values.namespace }}
+  namespace: {{ .Values.global.namespace }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: processor
+      {{- include "processor-chart.selectorLabels" . | nindent 6 }}
   serviceName: {{ include "processor-chart.fullname" . }}
   template:
     metadata:
       labels:
-        app: processor
+        {{- include "processor-chart.selectorLabels" . | nindent 8 }}
     spec:
-      priorityClassName: high-priority
+      priorityClassName: {{ .Values.priorityClass.name }}
       containers:
         - name: {{ .Chart.Name }}
-          image: "{{ .Values.image }}:{{ .Values.image_tag }}"
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
             - name: KAFKA_BOOTSTRAP_SERVER_URL
               value: {{ .Values.kafka_bootstrap_server }}
             - name: JAAS_CONFIG
-              value: {{ .Values.kafka_jaas_config }}
-          imagePullPolicy: Always
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.kafka.kafkaUser.userName }}
+                  key: {{ .Values.env.secretKeyRef.key }}
           ports:
-            - name: http
-              containerPort: 8080
-              protocol: TCP
-      {{- with .Values.affinity }}
-      affinity:
-        {{- toYaml . | nindent 8 }}
+            {{- range $port := .Values.ports }}
+            - name: {{ $port.name }}
+              containerPort: {{ $port.containerPort }}
+              protocol: {{$port.protocol }}
+            {{- end }}
+      {{- with .Values.kafkaAffinity }}
+        {{- toYaml . | nindent 6 }}
       {{- end }}

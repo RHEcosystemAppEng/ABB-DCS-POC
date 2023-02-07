@@ -2,12 +2,19 @@ apiVersion: kafka.strimzi.io/v1beta2
 kind: Kafka
 metadata:
   name: {{ .Values.kafka.kafkaCluster.clusterName }}
-  namespace: {{ .Values.namespace }}
+  namespace: {{ .Values.global.namespace }}
   annotations:
     "helm.sh/hook": pre-install
-    "helm.sh/hook-weight": "4"
+    "helm.sh/hook-weight": "3"
     "helm.sh/hook-delete-policy": before-hook-creation
 spec:
+  entityOperator:
+    topicOperator:
+      reconciliationIntervalSeconds: {{ .Values.kafka.entityOperator.reconciliationIntervalSeconds }}
+      watchedNamespace: {{ .Values.global.namespace }}
+    userOperator:
+      reconciliationIntervalSeconds: {{ .Values.kafka.entityOperator.reconciliationIntervalSeconds }}
+      watchedNamespace: {{ .Values.global.namespace }}
   kafka:
     authorization:
       superUsers:
@@ -43,16 +50,9 @@ spec:
       type: {{ .Values.kafka.kafkaCluster.kafka.storageType }}
     template:
       pod:
-        affinity:
-          podAntiAffinity:
-            requiredDuringSchedulingIgnoredDuringExecution:
-              - labelSelector:
-                  matchExpressions:
-                    - key: strimzi.io/name
-                      operator: In
-                      values:
-                        - my-cluster-kafka
-                topologyKey: kubernetes.io/hostname
+        {{- with .Values.kafkaAffinity }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
     version: {{ .Values.kafka.kafkaCluster.kafka.version }}
   zookeeper:
     replicas: {{ .Values.kafka.kafkaCluster.zookeeper.replicas }}

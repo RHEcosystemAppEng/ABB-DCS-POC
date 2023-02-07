@@ -2,16 +2,16 @@ apiVersion: kafka.strimzi.io/v1beta2
 kind: KafkaBridge
 metadata:
   name: {{ .Values.kafka.kafkaBridge.bridgeName }}
-  namespace: {{ .Values.namespace }}
+  namespace: {{ .Values.global.namespace }}
   annotations:
     "helm.sh/hook": pre-install
-    "helm.sh/hook-weight": "5"
+    "helm.sh/hook-weight": "4"
     "helm.sh/hook-delete-policy": before-hook-creation
 spec:
   authentication:
     passwordSecret:
       password: password
-      secretName: {{ .Values.kafka.kafkaSecret.secretName }}
+      secretName: {{ .Values.kafka.kafkaUser.userName }}
     type: {{ .Values.kafka.kafkaUser.authenticationType }}
     username: {{ .Values.kafka.kafkaUser.userName }}
   bootstrapServers: {{ .Values.kafka_bootstrap_server }}

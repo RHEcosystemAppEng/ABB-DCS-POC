@@ -4,10 +4,10 @@ metadata:
   labels:
     strimzi.io/cluster: {{ .Values.kafka.kafkaCluster.clusterName }}
   name: {{ .Values.kafka.kafkaUser.userName }}
-  namespace: {{ .Values.namespace }}
+  namespace: {{ .Values.global.namespace }}
   annotations:
     "helm.sh/hook": pre-install
-    "helm.sh/hook-weight": "3"
+    "helm.sh/hook-weight": "2"
     "helm.sh/hook-delete-policy": before-hook-creation
 spec:
   authentication:
@@ -20,12 +20,4 @@ spec:
           name: my-topic
           patternType: literal
           type: topic
-        type: allow
-      - host: '*'
-        operation: All
-        resource:
-          name: daboogie-consumer-group
-          patternType: literal
-          type: group
-        type: allow
     type: {{ .Values.kafka.kafkaUser.authorizationType }}

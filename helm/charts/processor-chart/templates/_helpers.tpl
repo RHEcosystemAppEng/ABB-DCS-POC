@@ -60,3 +60,12 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
+
+{{/*
+Build kafka bridge host url
+*/}}
+{{- define "processor-chart.buildKafkaBridgeHostUrl" -}}
+{{- .Values.global.processor.kafka.kafkaBridge.routeName }}{{ "-" }}
+{{- .Values.global.namespace }}{{ "." }}
+{{- .Values.global.domain }}
+{{- end }}
