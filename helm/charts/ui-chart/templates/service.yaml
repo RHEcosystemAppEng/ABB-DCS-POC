@@ -7,6 +7,6 @@ spec:
   selector:
     {{- include "ui.selectorLabels" . | nindent 4 }}
   ports:
-    - protocol: {{ .Values.port.protocol }}
-      port: {{ .Values.service.port }}
-      targetPort: {{ .Values.port.containerPort }}
+    - protocol: {{ .Values.service.ports.protocol }}
+      port: {{ .Values.service.ports.port }}
+      targetPort: {{ .Values.service.ports.containerPort }}

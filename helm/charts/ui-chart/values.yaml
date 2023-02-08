@@ -7,16 +7,19 @@ replicaCount: 3
 
 image:
   repository: quay.io/ecosystem-appeng/abb-ui
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
   tag: latest
 
-port: 
+ports: 
   containerPort: 3000
   protocol: TCP
 
 service:
-  port: 80
+  ports:
+    containerPort: 3000
+    port: 80
+    protocol: TCP
 
 engineering:
   serviceName: abb-engineering

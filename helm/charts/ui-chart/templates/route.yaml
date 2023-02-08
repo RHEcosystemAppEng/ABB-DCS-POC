@@ -8,4 +8,4 @@ spec:
     kind: Service
     name: {{ include "ui.fullname" . }}
   port:
-    targetPort: {{ .Values.port.containerPort }}
+    targetPort: {{ .Values.ports.containerPort }}

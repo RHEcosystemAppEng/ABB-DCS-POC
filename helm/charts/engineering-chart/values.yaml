@@ -1,0 +1,37 @@
+# Default values for engineering.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+fullnameOverride: abb-poc-engineering
+replicaCount: 3
+
+image:
+  repository: quay.io/ecosystem-appeng/abb-engineering
+  pullPolicy: Always
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: latest
+
+ports: 
+  containerPort: 10000
+
+livenessProbe:
+  initialDelaySeconds: 5
+  periodSeconds: 5
+  timeoutSeconds: 1
+  httpGet:
+    path: /health
+    port: 10000
+    scheme: HTTP
+
+env:
+  S3_ENDPOINT: "rook-ceph-rgw-ocs-storagecluster-cephobjectstore.openshift-storage.svc:443"
+  S3_BUCKET: "abb-configs-537fed59-97ff-45e3-93e2-32d32869cbe6"
+  AWS_ACCESS_KEY_ID: "Y6S6GDIEHVSIELBE2PKN"
+  AWS_SECRET_ACCESS_KEY: "hDR9cj3XIK4Kd2pxfDAGMKt1tzTAwloHD724SB2h"
+
+service: 
+  type: NodePort
+  ports:
+    name: http
+    port: 10000
+    targetPort: 10000

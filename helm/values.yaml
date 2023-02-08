@@ -3,7 +3,7 @@
 # Declare variables to be passed into your templates.
 
 global:
-  namespace: abb-test
+  namespace: abb-poc
   domain: apps.abb-cl01.appeng.rhecoeng.com
   processor:
     service:

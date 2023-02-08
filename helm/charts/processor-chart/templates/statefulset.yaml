@@ -28,11 +28,9 @@ spec:
                   name: {{ .Values.kafka.kafkaUser.userName }}
                   key: {{ .Values.env.secretKeyRef.key }}
           ports:
-            {{- range $port := .Values.ports }}
-            - name: {{ $port.name }}
-              containerPort: {{ $port.containerPort }}
-              protocol: {{$port.protocol }}
-            {{- end }}
+            - name: {{ .Values.ports.name }}
+              containerPort: {{ .Values.ports.containerPort }}
+              protocol: {{ .Values.ports.protocol }}
       {{- with .Values.kafkaAffinity }}
         {{- toYaml . | nindent 6 }}
       {{- end }}

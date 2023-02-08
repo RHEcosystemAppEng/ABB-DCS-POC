@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "engineering.fullname" . }}
+  namespace: {{ .Values.global.namespace }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+  - name: {{ .Values.service.ports.name }}
+    port: {{ .Values.service.ports.port }}
+    targetPort: {{ .Values.service.ports.targetPort }}
+  selector:
+    {{- include "engineering.selectorLabels" . | nindent 4 }}

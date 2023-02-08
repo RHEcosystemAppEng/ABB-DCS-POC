@@ -18,8 +18,8 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
-            - containerPort: {{ .Values.port.containerPort }}
-              protocol: {{ .Values.port.protocol }}
+            - containerPort: {{ .Values.ports.containerPort }}
+              protocol: {{ .Values.ports.protocol }}
           env:
             - name: PROCESSOR_SERVICE
               value: {{ include "ui.buildProcessorServiceUrl" . }}
