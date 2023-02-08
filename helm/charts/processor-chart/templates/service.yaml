@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.global.processor.service.name }}
+  namespace: {{ .Values.global.namespace }}
+spec:
+  type: {{ .Values.service.type }}
+  selector:
+    {{- include "processor-chart.selectorLabels" . | nindent 4 }}
+  ports:
+    - name: {{ .Values.service.ports.name }}
+      port: {{ .Values.global.processor.service.ports.port }}
+      targetPort: {{ .Values.service.ports.targetPort }}

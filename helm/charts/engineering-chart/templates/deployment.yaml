@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "engineering.fullname" . }}
+  namespace: {{ .Values.global.namespace }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "engineering.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "engineering.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+      - name: {{ .Chart.Name }}
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        ports:
+          - containerPort: {{ .Values.ports.containerPort }}
+        livenessProbe:
+          httpGet:
+            path: {{ .Values.livenessProbe.httpGet.path }}
+            port: {{ .Values.livenessProbe.httpGet.port }}
+            scheme: {{ .Values.livenessProbe.httpGet.scheme }}
+          initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
+          periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
+          timeoutSeconds: {{ .Values.livenessProbe.timeoutSeconds }}
+        env:
+        - name: S3_ENDPOINT
+          value: {{ .Values.env.S3_ENDPOINT }}
+        - name: S3_BUCKET
+          value: {{ .Values.env.S3_BUCKET }}
+        - name: AWS_ACCESS_KEY_ID
+          value: {{ .Values.env.AWS_ACCESS_KEY_ID }}
+        - name: AWS_SECRET_ACCESS_KEY
+          value: {{ .Values.env.AWS_SECRET_ACCESS_KEY }}

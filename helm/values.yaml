@@ -1,0 +1,15 @@
+# Default values for helm.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+global:
+  namespace: abb-poc
+  domain: apps.abb-cl01.appeng.rhecoeng.com
+  processor:
+    service:
+      name: processor-service
+      ports:
+        port: 8080
+    kafka:
+      kafkaBridge:
+        routeName: kafka-bridge

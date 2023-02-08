@@ -1,0 +1,10 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ include "processor-chart.fullname" . }}
+  namespace: {{ .Values.global.namespace }}
+spec:
+  minAvailable: {{ .Values.PodDisruptionBudget.minAvailable }}
+  selector:
+    matchLabels:
+      {{- include "processor-chart.selectorLabels" . | nindent 6 }}

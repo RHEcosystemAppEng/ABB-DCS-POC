@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "processor-chart.fullname" . }}
+  namespace: {{ .Values.global.namespace }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "processor-chart.selectorLabels" . | nindent 6 }}
+  serviceName: {{ include "processor-chart.fullname" . }}
+  template:
+    metadata:
+      labels:
+        {{- include "processor-chart.selectorLabels" . | nindent 8 }}
+    spec:
+      priorityClassName: {{ .Values.priorityClass.name }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: KAFKA_BOOTSTRAP_SERVER_URL
+              value: {{ .Values.kafka_bootstrap_server }}
+            - name: JAAS_CONFIG
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.kafka.kafkaUser.userName }}
+                  key: {{ .Values.env.secretKeyRef.key }}
+          ports:
+            - name: {{ .Values.ports.name }}
+              containerPort: {{ .Values.ports.containerPort }}
+              protocol: {{ .Values.ports.protocol }}
+      {{- with .Values.kafkaAffinity }}
+        {{- toYaml . | nindent 6 }}
+      {{- end }}

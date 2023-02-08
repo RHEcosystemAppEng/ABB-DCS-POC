@@ -1,0 +1,60 @@
+apiVersion: kafka.strimzi.io/v1beta2
+kind: Kafka
+metadata:
+  name: {{ .Values.kafka.kafkaCluster.clusterName }}
+  namespace: {{ .Values.global.namespace }}
+  annotations:
+    "helm.sh/hook": pre-install
+    "helm.sh/hook-weight": "3"
+    "helm.sh/hook-delete-policy": before-hook-creation
+spec:
+  entityOperator:
+    topicOperator:
+      reconciliationIntervalSeconds: {{ .Values.kafka.entityOperator.reconciliationIntervalSeconds }}
+      watchedNamespace: {{ .Values.global.namespace }}
+    userOperator:
+      reconciliationIntervalSeconds: {{ .Values.kafka.entityOperator.reconciliationIntervalSeconds }}
+      watchedNamespace: {{ .Values.global.namespace }}
+  kafka:
+    authorization:
+      superUsers:
+        - {{ .Values.kafka.kafkaUser.userName }}
+      type: {{ .Values.kafka.kafkaUser.authorizationType }}
+    config:
+      default.replication.factor: 3
+      delete.topic.enable: true
+      inter.broker.protocol.version: '3.3'
+      min.insync.replicas: 2
+      offsets.topic.replication.factor: 3
+      transaction.state.log.min.isr: 2
+      transaction.state.log.replication.factor: 3
+    listeners:
+      - name: plain
+        port: 9092
+        tls: false
+        type: internal
+      - authentication:
+          type: {{ .Values.kafka.kafkaUser.authenticationType }}
+        name: scram
+        port: 9093
+        tls: true
+        type: route
+      - authentication:
+          type: {{ .Values.kafka.kafkaUser.authenticationType }}
+        name: internal
+        port: 9095
+        tls: false
+        type: internal
+    replicas: {{ .Values.kafka.kafkaCluster.kafka.replicas }}
+    storage:
+      type: {{ .Values.kafka.kafkaCluster.kafka.storageType }}
+    template:
+      pod:
+        {{- with .Values.kafkaAffinity }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+    version: {{ .Values.kafka.kafkaCluster.kafka.version }}
+  zookeeper:
+    replicas: {{ .Values.kafka.kafkaCluster.zookeeper.replicas }}
+    storage:
+      type: {{ .Values.kafka.kafkaCluster.zookeeper.storageType }}

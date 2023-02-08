@@ -1,0 +1,12 @@
+# Default values for controller.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+fullnameOverride: abb-poc-controller
+replicaCount: 2
+
+image:
+  repository: quay.io/ecosystem-appeng/abb-poc-controller
+  pullPolicy: Always
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: 1.0.5

@@ -1,0 +1,11 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: {{ include "ui.fullname" . }}
+  namespace: {{ .Values.global.namespace }}
+spec:
+  to:
+    kind: Service
+    name: {{ include "ui.fullname" . }}
+  port:
+    targetPort: {{ .Values.ports.containerPort }}

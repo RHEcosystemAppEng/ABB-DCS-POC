@@ -1,0 +1,111 @@
+# Default values for processor-chart.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 3
+kafka_bootstrap_server: abb-poc-kafka-cluster-kafka-bootstrap:9095
+
+priorityClass:
+  name: high-priority
+  value: 1000000
+  globalDefault: false
+
+PodDisruptionBudget:
+  minAvailable: 1
+
+image:
+  repository: quay.io/ecosystem-appeng/abb-poc-processor
+  pullPolicy: Always
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: 1.0.10
+
+ports: 
+  name: http
+  containerPort: 8080
+  protocol: TCP
+
+env: 
+  secretKeyRef:
+    key: sasl.jaas.config
+
+statefulsetAffinity:
+  affinity:
+    podAntiAffinity:
+      preferredDuringSchedulingIgnoredDuringExecution:
+        - weight: 100
+          podAffinityTerm:
+            labelSelector:
+              matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                    - processor
+            topologyKey: kubernetes.io/hostname
+
+kafkaAffinity:
+  affinity:
+          podAntiAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+              - labelSelector:
+                  matchExpressions:
+                    - key: strimzi.io/name
+                      operator: In
+                      values:
+                        - abb-poc-kafka-cluster-kafka
+                topologyKey: kubernetes.io/hostname
+
+service:
+  type: ClusterIP
+  ports:
+    name: http
+    targetPort: 8080
+
+kafka:
+  subscription:
+    operatorName: amq-streams
+    channel: stable
+    installPlanApproval: Automatic
+    source: redhat-operators
+    sourceNamespace: openshift-marketplace
+    startingCSV: amqstreams.v2.3.0-0
+  operatorGroup:
+    groupName: abb-poc-og
+  kafkaUser: 
+    userName: abb-poc-kafka-user
+    authenticationType: scram-sha-512
+    authorizationType: simple
+  kafkaCluster: 
+    clusterName: abb-poc-kafka-cluster 
+    kafka:
+      replicas: 3
+      storageType: ephemeral
+      version: 3.3.1
+    zookeeper:
+      replicas: 3
+      storageType: ephemeral
+  kafkaBridge:
+    bridgeName: abb-poc-kafka-bridge
+    httpPort: 8080
+    replicas: 1
+  topics:
+    - resourceName: motor-noise
+      topicName: motor_noise
+      partitions: 1
+      replicas: 3
+    - resourceName: motor-power-consumption
+      topicName: motor_power_consumption
+      partitions: 1
+      replicas: 3
+    - resourceName: motor-temperature
+      topicName: motor_temperature
+      partitions: 1
+      replicas: 3
+    - resourceName: motor-speed
+      topicName: motor_speed
+      partitions: 1
+      replicas: 3
+  entityOperator:
+    reconciliationIntervalSeconds: 60
+
+
+

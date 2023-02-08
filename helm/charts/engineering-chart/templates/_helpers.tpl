@@ -1,7 +1,7 @@
 {{/*
 Expand the name of the chart.
 */}}
-{{- define "processor-chart.name" -}}
+{{- define "engineering.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
@@ -10,7 +10,7 @@ Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 If release name contains chart name it will be used as a full name.
 */}}
-{{- define "processor-chart.fullname" -}}
+{{- define "engineering.fullname" -}}
 {{- if .Values.fullnameOverride }}
 {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
 {{- else }}
@@ -26,16 +26,16 @@ If release name contains chart name it will be used as a full name.
 {{/*
 Create chart name and version as used by the chart label.
 */}}
-{{- define "processor-chart.chart" -}}
+{{- define "engineering.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
 Common labels
 */}}
-{{- define "processor-chart.labels" -}}
-helm.sh/chart: {{ include "processor-chart.chart" . }}
-{{ include "processor-chart.selectorLabels" . }}
+{{- define "engineering.labels" -}}
+helm.sh/chart: {{ include "engineering.chart" . }}
+{{ include "engineering.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
@@ -45,17 +45,17 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{/*
 Selector labels
 */}}
-{{- define "processor-chart.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "processor-chart.name" . }}
+{{- define "engineering.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "engineering.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
 Create the name of the service account to use
 */}}
-{{- define "processor-chart.serviceAccountName" -}}
+{{- define "engineering.serviceAccountName" -}}
 {{- if .Values.serviceAccount.create }}
-{{- default (include "processor-chart.fullname" .) .Values.serviceAccount.name }}
+{{- default (include "engineering.fullname" .) .Values.serviceAccount.name }}
 {{- else }}
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
